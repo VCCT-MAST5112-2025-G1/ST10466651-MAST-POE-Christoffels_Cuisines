@@ -143,9 +143,10 @@ The following screenshots show key parts of the app UI:
 ![Home](./images/HOME.PNG)
 
 ## Links 
-repository https://github.com/yourusername/christoffels-cuisines.git
+Repository: https://github.com/yourusername/christoffels-cuisines.git
 
-Youtube https://youtu.be/qGS9_WJWTXc
+Old Youtube: https://youtu.be/qGS9_WJWTXc
+New Youtube: 
 
 ## Contributing
 ### Contributions are welcome!
