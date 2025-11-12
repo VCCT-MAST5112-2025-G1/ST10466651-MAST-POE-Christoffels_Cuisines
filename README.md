@@ -134,13 +134,13 @@ Changes reflect immediately across the app due to dynamic state handling.
 ## Screenshots
 The following screenshots show key parts of the app UI:
 
-![Drinks](../../MAST%20POE/Christoffels/images/DRINKS.PNG)
+![Drinks](./images/DRINKS.PNG)
 
-![Edit](../../MAST%20POE/Christoffels/images/EDIT.PNG)
+![Edit](./images/EDIT.PNG)
 
-![Menu](../../MAST%20POE/Christoffels/images/MENU.PNG)
+![Menu](./images/MENU.PNG)
 
-![Home](../../MAST%20POE/Christoffels/images/HOME.PNG)
+![Home](./images/HOME.PNG)
 
 ## Links 
 repository https://github.com/yourusername/christoffels-cuisines.git
