@@ -171,8 +171,20 @@ All notable changes to this project are documented here.
     - Added Delete button
     - Added Modal for EditMenu and for Delete button
 	- Modal overlay handlers added to close modal on outside tap.
-	- Keyboard dismissal behavior improved so tapping outside input boxes hides the keyboard.
-	- Modal styles neatened (centered container, padding, rounded corners).
+	- Keyboard dismissal behavior improved so tapping outside
+      input boxes hides the keyboard.
+	- Modal styles neatened (centered container, padding, rounded
+      corners).
 - `HomeScreen.tsx`:
-	- Updated logic to detect newly added items and display them in the home input box instead of the full array (when appropriate).
+	- Updated logic to detect newly added items and display them
+      in the home input box instead of the full array (when appropriate).
     - Added averages for the meals
+- `README.md`:
+    - Fixed the error of my images being displayed in my README 
+    - Added a ChangeLog
+- `constants.ts`:
+    - Removed an error that was not being used 
+- `DataContext.tsx`:
+    - Removed the declaration of the array that wasn't being used
+- `global.ts`: 
+    - Added new things to the global style of the app
