@@ -57,10 +57,10 @@ export const styles = StyleSheet.create({
   editmenuBox: {
     flex: 1,
     marginTop: 30,
-    marginBottom: 80,
+    marginBottom: 50,
     marginLeft: 25,
     marginRight: 25,
-    maxHeight: 560,
+    maxHeight: 700,
     borderWidth: 1,
     borderRadius: 4,
     borderColor: '#000',
@@ -99,18 +99,20 @@ export const styles = StyleSheet.create({
   },
   itemName: {
     fontWeight: 'bold',
-    fontSize: 16,
+    fontSize: 14,
+    alignItems: 'center',
   },
   itemDesc: {
     color: '#fffdfdff',
-    fontSize: 13,
+    fontSize: 11,
     marginTop: 4,
     width: '90%',
   },
   itemPrice: {
     fontWeight: '600',
     fontSize: 14,
-    alignSelf: 'flex-start',
+    width: 80,
+    textAlign: 'right',
   },
   grid: {
     flexDirection: 'row',
@@ -134,9 +136,6 @@ export const styles = StyleSheet.create({
   },
   form: {
     marginBottom: 40,
-  },
-    error: { 
-      color: 'red',  
   },
   input: {
     backgroundColor: '#d9d7d8',
@@ -197,7 +196,6 @@ pickerContainer: {
     overflow: 'hidden', // ensures dropdown doesn’t exceed boundaries
     backgroundColor: '#fff',
   },
-
   picker: {
     height: 50,
     width: '100%',
@@ -233,7 +231,7 @@ pickerContainer: {
   indexposition:{
     marginTop: 30,
     marginBottom: 121,
-        flex: 1,
+    flex: 1,
     backgroundColor: '#d9d7d8',
     paddingHorizontal: 20,
   },
@@ -258,5 +256,12 @@ pickerContainer: {
     elevation: 15,
     height: 65,
     paddingBottom: 5,
+  },
+  avgPriceText: {
+    fontSize: 12,
+    fontWeight: '500',
+    marginTop: -132,
+    textAlign: 'left',
+    marginLeft: 25
   },
 });

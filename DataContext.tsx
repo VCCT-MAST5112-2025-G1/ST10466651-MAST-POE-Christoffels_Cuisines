@@ -1,5 +1,5 @@
 import React, { createContext, useState, ReactNode, useEffect } from 'react';
-import { menuItems, drinks as drinksConst, food as foodConst } from './constants';
+import { drinks as drinksConst, food as foodConst } from './constants';
 
 // ---------------- TYPES ----------------
 
@@ -110,7 +110,6 @@ export const AppDataProvider = ({ children }: { children: ReactNode }) => {
   // ---------------- ACTIONS ----------------
 
   const populateAll = () => {
-    setMenuItems(menuItems);
     setDrinks(drinksConst);
     setFood(foodConst);
     setViewAll(true);
