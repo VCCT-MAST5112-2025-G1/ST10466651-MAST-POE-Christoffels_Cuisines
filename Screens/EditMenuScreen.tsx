@@ -271,6 +271,8 @@ export default function EditMenuScreen() {
               style={styles.input}
               value={mealDesc}
               onChangeText={setMealDesc}
+              maxLength={200}
+
             />
 
             <Text style={styles.label}>PRICE:</Text>
@@ -282,7 +284,9 @@ export default function EditMenuScreen() {
                 setMealPrice(numericValue ? `R${numericValue}` : '');
               }}
               keyboardType="numeric"
-              placeholder="R0"
+              placeholder="R0.00"
+              maxLength={4}
+
             />
           </View>
 
@@ -391,6 +395,7 @@ export default function EditMenuScreen() {
                     placeholder="Enter new description"
                     multiline
                     placeholderTextColor="#777"
+                    maxLength={200}
                   />
 
                   <Text style={editModalStyles.label}>NEW PRICE:</Text>
@@ -404,6 +409,7 @@ export default function EditMenuScreen() {
                     keyboardType="number-pad"
                     placeholder="R0.00"
                     placeholderTextColor="#777"
+                    maxLength={4}
 
                   />
                 </>
