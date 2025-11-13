@@ -146,7 +146,7 @@ The following screenshots show key parts of the app UI:
 Repository: https://github.com/yourusername/christoffels-cuisines.git
 
 Old Youtube: https://youtu.be/qGS9_WJWTXc
-New Youtube: 
+New Youtube: https://youtu.be/De845tS51tM
 
 ## Contributing
 ### Contributions are welcome!
