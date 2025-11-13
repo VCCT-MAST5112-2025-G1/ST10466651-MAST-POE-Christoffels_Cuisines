@@ -8,6 +8,7 @@ import {
   Alert,
   Keyboard,
   TouchableWithoutFeedback,
+  KeyboardAvoidingView,
   Modal,
   ScrollView,
 } from 'react-native';
@@ -30,15 +31,17 @@ export default function EditMenuScreen() {
   const [mealDesc, setMealDesc] = useState('');
   const [mealPrice, setMealPrice] = useState('');
 
-  // Delete and Edit modal state
+  // Delete modal state
   const [deleteModalVisible, setDeleteModalVisible] = useState(false);
   const [deleteType, setDeleteType] = useState('');
   const [deleteMealName, setDeleteMealName] = useState('');
+    // Edit modal state
   const [editModalVisible, setEditModalVisible] = useState(false);
   const [editType, setEditType] = useState('');
   const [editMealName, setEditMealName] = useState('');
   const [editNewDesc, setEditNewDesc] = useState('');
   const [editNewPrice, setEditNewPrice] = useState('');
+
   const validMealTypes: FoodKeys[] = ["starters", "mains", "desserts", "specials"];
 
   const resetForm = () => {
@@ -133,7 +136,7 @@ export default function EditMenuScreen() {
     resetForm();
   };
 
-  const resetEditModal = () => {
+    const resetEditModal = () => {
     setEditModalVisible(false);
     setEditType('');
     setEditMealName('');
@@ -192,11 +195,53 @@ export default function EditMenuScreen() {
     resetEditModal();
   };
 
+  const handleEditMenu = () => {
+    if (!mealName || !mealType || !mealDesc || !mealPrice) {
+      Alert.alert("Error", "Please fill all fields.");
+      return;
+    }
+
+    const typeKey = mealType.trim().toLowerCase() as FoodKeys;
+
+    if (!validMealTypes.includes(typeKey)) {
+      Alert.alert(
+        "Error",
+        "Invalid meal type. Use: starters, mains, desserts, specials."
+      );
+      return;
+    }
+
+    const updatedArray = food[typeKey].map((item) =>
+      item.name === mealName
+        ? { ...item, desc: mealDesc.trim(), price: mealPrice.trim() }
+        : item
+    );
+
+    // Check if meal exists
+    if (!updatedArray.find((item) => item.name === mealName)) {
+      Alert.alert(
+        "Error",
+        `${mealType.toUpperCase()} not found. Use Add to Menu instead.`
+      );
+      return;
+    }
+
+    setFood({
+      ...food,
+      [typeKey]: updatedArray,
+    });
+
+    Alert.alert("Success", `${typeKey.toUpperCase()} edited!`);
+    resetForm();
+  };
+
   const mealSuggestions = getMealSuggestions();
 
   return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <SafeAreaView style={styles.container}>
+      <KeyboardAvoidingView
+        style={{ flex: 1 }}
+      >        
         <Text style={styles.title}>EDIT MENU</Text>
         <View style={styles.editmenuBox}>
           <View style={styles.form}>
@@ -237,11 +282,12 @@ export default function EditMenuScreen() {
                 setMealPrice(numericValue ? `R${numericValue}` : '');
               }}
               keyboardType="numeric"
-              placeholder="R0.00"
+              placeholder="R0"
             />
           </View>
 
-<TouchableOpacity style={styles.button} onPress={handleEditMenuClick}>            <Text style={styles.buttonText}>EDIT MENU</Text>
+          <TouchableOpacity style={styles.button} onPress={handleEditMenuClick}>            
+              <Text style={styles.buttonText}>EDIT MENU</Text>
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.addButton} onPress={handleAddToMenu}>
@@ -253,7 +299,7 @@ export default function EditMenuScreen() {
           </TouchableOpacity>
         </View>
 
-        {/* Edit Modal */}
+                {/* Edit Modal */}
         <Modal
           visible={editModalVisible}
           transparent
@@ -261,116 +307,130 @@ export default function EditMenuScreen() {
           onRequestClose={resetEditModal}
         >
           <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-            <View style={editModalStyles.overlay}>
-              <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-                <View style={editModalStyles.modalContainer}>
-                  <Text style={editModalStyles.modalTitle}>Edit Meal</Text>
+        <KeyboardAvoidingView
+        style={{ flex: 1 }}
+        >
+          <View style={editModalStyles.overlay}>
+            <View style={editModalStyles.modalContainer}>
+              <Text style={editModalStyles.modalTitle}>Edit Meal</Text>
 
-                  <Text style={editModalStyles.label}>SELECT MEAL TYPE:</Text>
-                  <View style={editModalStyles.typeButtonsContainer}>
-                    {validMealTypes.map((type) => (
+              <Text style={editModalStyles.label}>SELECT MEAL TYPE:</Text>
+              <View style={editModalStyles.typeButtonsContainer}>
+                {validMealTypes.map((type) => (
+                  <TouchableOpacity
+                    key={type}
+                    style={[
+                      editModalStyles.typeButton,
+                      editType === type && editModalStyles.typeButtonActive,
+                    ]}
+                    onPress={() => {
+                      setEditType(type);
+                      setEditMealName('');
+                      setEditNewDesc('');
+                      setEditNewPrice('');
+                    }}
+                  >
+                    <Text
+                      style={[
+                        editModalStyles.typeButtonText,
+                        editType === type && editModalStyles.typeButtonTextActive,
+                      ]}
+                    >
+                      {type.charAt(0).toUpperCase() + type.slice(1)}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+
+              {editType && getEditMealSuggestions().length > 0 && (
+                <>
+                  <Text style={editModalStyles.label}>SELECT MEAL:</Text>
+                  <ScrollView style={editModalStyles.suggestionsContainer}>
+                    {getEditMealSuggestions().map((suggestion) => (
                       <TouchableOpacity
-                        key={type}
+                        key={suggestion}
                         style={[
-                          editModalStyles.typeButton,
-                          editType === type && editModalStyles.typeButtonActive,
+                          editModalStyles.suggestionItem,
+                          editMealName === suggestion && editModalStyles.suggestionItemActive,
                         ]}
-                        onPress={() => {
-                          setEditType(type);
-                          setEditMealName('');
-                          setEditNewDesc('');
-                          setEditNewPrice('');
-                        }}
+                        onPress={() => setEditMealName(suggestion)}
                       >
                         <Text
                           style={[
-                            editModalStyles.typeButtonText,
-                            editType === type && editModalStyles.typeButtonTextActive,
+                            editModalStyles.suggestionText,
+                            editMealName === suggestion && editModalStyles.suggestionTextActive,
                           ]}
                         >
-                          {type.charAt(0).toUpperCase() + type.slice(1)}
+                          {suggestion}
                         </Text>
                       </TouchableOpacity>
                     ))}
-                  </View>
+                  </ScrollView>
+                </>
+              )}
 
-                  {editType && getEditMealSuggestions().length > 0 && (
-                    <>
-                      <Text style={editModalStyles.label}>SELECT MEAL:</Text>
-                      <ScrollView style={editModalStyles.suggestionsContainer}>
-                        {getEditMealSuggestions().map((suggestion) => (
-                          <TouchableOpacity
-                            key={suggestion}
-                            style={[
-                              editModalStyles.suggestionItem,
-                              editMealName === suggestion && editModalStyles.suggestionItemActive,
-                            ]}
-                            onPress={() => setEditMealName(suggestion)}
-                          >
-                            <Text
-                              style={[
-                                editModalStyles.suggestionText,
-                                editMealName === suggestion && editModalStyles.suggestionTextActive,
-                              ]}
-                            >
-                              {suggestion}
-                            </Text>
-                          </TouchableOpacity>
-                        ))}
-                      </ScrollView>
-                    </>
-                  )}
+              {editType && getEditMealSuggestions().length === 0 && (
+                <Text style={editModalStyles.noSuggestionsText}>
+                  No meals found in {editType}
+                </Text>
+              )}
 
-                  {editType && getEditMealSuggestions().length === 0 && (
-                    <Text style={editModalStyles.noSuggestionsText}>
-                      No meals found in {editType}
-                    </Text>
-                  )}
+              {!editType && (
+                <Text style={editModalStyles.noSuggestionsText}>
+                  Select a meal type to see available meals
+                </Text>
+              )}
 
-                  {!editType && (
-                    <Text style={editModalStyles.noSuggestionsText}>
-                      Select a meal type to see available meals
-                    </Text>
-                  )}
+              {editMealName && (
+                <>
+                  <Text style={editModalStyles.label}>NEW DESCRIPTION:</Text>
+                  <TextInput
+                    style={editModalStyles.input}
+                    value={editNewDesc}
+                    onChangeText={setEditNewDesc}
+                    placeholder="Enter new description"
+                    multiline
+                    placeholderTextColor="#777"
+                  />
 
-                  {editMealName && (
-                    <>
-                      <Text style={editModalStyles.label}>NEW PRICE:</Text>
-                      <TextInput
-                        style={editModalStyles.input}
-                        value={editNewPrice}
-                        onChangeText={(text) => {
-                          const numericValue = text.replace(/\D/g, '');
-                          setEditNewPrice(numericValue ? `R${numericValue}` : '');
-                        }}
-                        keyboardType="numeric"
-                        placeholder="R0.00"
-                      />
-                    </>
-                  )}
+                  <Text style={editModalStyles.label}>NEW PRICE:</Text>
+                  <TextInput
+                    style={editModalStyles.input}
+                    value={editNewPrice}
+                    onChangeText={(text) => {
+                      const numericValue = text.replace(/\D/g, '');
+                      setEditNewPrice(numericValue ? `R${numericValue}` : '');
+                    }}
+                    keyboardType="number-pad"
+                    placeholder="R0.00"
+                    placeholderTextColor="#777"
 
-                  <View style={editModalStyles.buttonRow}>
-                    <TouchableOpacity
-                      style={editModalStyles.cancelButton}
-                      onPress={resetEditModal}
-                    >
-                      <Text style={editModalStyles.buttonText}>CANCEL</Text>
-                    </TouchableOpacity>
+                  />
+                </>
+              )}
 
-                    <TouchableOpacity
-                      style={[
-                        editModalStyles.confirmButton,
-                        (!editMealName || !editType || !editNewPrice) && editModalStyles.confirmButtonDisabled,
-                      ]}
-                      onPress={confirmEdit}
-                      disabled={!editMealName || !editType || !editNewPrice}
-                    >
-                      <Text style={editModalStyles.buttonText}>SAVE CHANGES</Text>
-                    </TouchableOpacity>
-                  </View>
-                </View>
-              </TouchableWithoutFeedback>
-            </View>
+              <View style={editModalStyles.buttonRow}>
+                <TouchableOpacity
+                  style={editModalStyles.cancelButton}
+                  onPress={resetEditModal}
+                >
+                  <Text style={editModalStyles.buttonText}>CANCEL</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  style={[
+                    editModalStyles.confirmButton,
+                    (!editMealName || !editType || !editNewDesc || !editNewPrice) && editModalStyles.confirmButtonDisabled,
+                  ]}
+                  onPress={confirmEdit}
+                  disabled={!editMealName || !editType || !editNewDesc || !editNewPrice}
+                >
+                  <Text style={editModalStyles.buttonText}>SAVE CHANGES</Text>
+                </TouchableOpacity>
+              </View>
+              </View>
+              </View>
+            </KeyboardAvoidingView>
           </TouchableWithoutFeedback>
         </Modal>
 
@@ -381,10 +441,8 @@ export default function EditMenuScreen() {
           animationType="slide"
           onRequestClose={resetDeleteModal}
         >
-          <TouchableWithoutFeedback onPress={resetDeleteModal}>
-            <View style={deleteModalStyles.overlay}>
-              <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-                <View style={deleteModalStyles.modalContainer}>
+          <View style={deleteModalStyles.overlay}>
+            <View style={deleteModalStyles.modalContainer}>
               <Text style={deleteModalStyles.modalTitle}>Delete Meal</Text>
 
               <Text style={deleteModalStyles.label}>SELECT MEAL TYPE:</Text>
@@ -472,13 +530,12 @@ export default function EditMenuScreen() {
                   <Text style={deleteModalStyles.buttonText}>DELETE</Text>
                 </TouchableOpacity>
               </View>
-                </View>
-              </TouchableWithoutFeedback>
             </View>
-          </TouchableWithoutFeedback>
+          </View>
         </Modal>
-      </SafeAreaView>
-    </TouchableWithoutFeedback>
+    </KeyboardAvoidingView>      
+    </SafeAreaView>
+
   );
 }
 
@@ -532,7 +589,7 @@ const deleteModalStyles = {
   typeButtonText: {
     fontSize: 10,
     fontWeight: '500',
-    color: '#333',
+    color: '#050505ff',
   } as const,
   typeButtonTextActive: {
     color: '#fff',
@@ -549,14 +606,14 @@ const deleteModalStyles = {
     paddingHorizontal: 12,
     paddingVertical: 10,
     borderBottomWidth: 1,
-    borderBottomColor: '#eee',
+    borderBottomColor: '#030303ff',
   } as const,
   suggestionItemActive: {
     backgroundColor: '#e3f2fd',
   } as const,
   suggestionText: {
     fontSize: 14,
-    color: '#333',
+    color: '#000000ff',
   } as const,
   suggestionTextActive: {
     fontWeight: '700',
@@ -564,7 +621,7 @@ const deleteModalStyles = {
   } as const,
   noSuggestionsText: {
     fontSize: 14,
-    color: '#999',
+    color: '#000000ff',
     textAlign: 'center',
     marginVertical: 20,
   } as const,
@@ -596,7 +653,7 @@ const deleteModalStyles = {
     fontSize: 14,
     fontWeight: '600',
     color: '#fff',
-  } as const,  
+  } as const,
 };
 
 const editModalStyles = {
@@ -649,7 +706,7 @@ const editModalStyles = {
   typeButtonText: {
     fontSize: 10,
     fontWeight: '500',
-    color: '#333',
+    color: '#020202ff',
   } as const,
   typeButtonTextActive: {
     color: '#fff',
@@ -666,14 +723,14 @@ const editModalStyles = {
     paddingHorizontal: 12,
     paddingVertical: 10,
     borderBottomWidth: 1,
-    borderBottomColor: '#eee',
+    borderBottomColor: '#0a0a0aff',
   } as const,
   suggestionItemActive: {
     backgroundColor: '#e3f2fd',
   } as const,
   suggestionText: {
     fontSize: 14,
-    color: '#333',
+    color: '#000000ff',
   } as const,
   suggestionTextActive: {
     fontWeight: '700',
@@ -681,19 +738,18 @@ const editModalStyles = {
   } as const,
   noSuggestionsText: {
     fontSize: 14,
-    color: '#999',
+    color: '#080808ff',
     textAlign: 'center',
     marginVertical: 20,
   } as const,
   input: {
-    backgroundColor: '#fff',
+    backgroundColor: '#ffffffff',
     borderWidth: 1,
     borderColor: '#ccc',
     borderRadius: 8,
     padding: 10,
     fontSize: 14,
     marginBottom: 12,
-    textcolor: '#000',
   } as const,
   buttonRow: {
     flexDirection: 'row',
